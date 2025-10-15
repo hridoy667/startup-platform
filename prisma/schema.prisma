@@ -50,7 +50,7 @@ model User {
   domain     String? @unique
   avatar     String?
 
-  phone_number  String?
+  phone_number  String
   country       String?
   state         String?
   city          String?
@@ -82,8 +82,43 @@ model User {
   roles                Role[]
   role_users           RoleUser[]
   payment_transactions PaymentTransaction[]
-
+  Posts Post[]
+  Comments comment[]
+  Likes likes[]
   @@map("users")
+  
+}
+model likes {
+id String @id @default(cuid())
+postId String
+userId String
+post Post @relation(fields: [postId],references: [id],onDelete: Cascade)
+user User @relation(fields:[userId],references: [id],onDelete: Cascade)
+
+createdAt DateTime @default(now())
+
+@@unique([userId,postId])
+
+}
+
+model comment {
+id Int @id @default(autoincrement())
+commentBody String
+commentAuthorId String
+commentAuthor User @relation(fields: [commentAuthorId], references: [id], onDelete: Cascade)
+}
+
+
+model Post{
+  id String @id @default(cuid())
+  title String
+  body String
+  isPublished Boolean @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  authorId String
+  author User @relation(fields: [authorId], references: [id],onDelete: Cascade)
+  likes likes[]
 }
 
 model Ucode {

@@ -21,7 +21,7 @@ async function bootstrap() {
   // app.use('/payment/stripe/webhook', express.raw({ type: 'application/json' }));
 
   app.setGlobalPrefix('api');
-  app.enableCors();
+  // app.enableCors();
   app.use(helmet());
   // Enable it, if special charactrers not encoding perfectly
   // app.use((req, res, next) => {
@@ -79,6 +79,6 @@ async function bootstrap() {
   SwaggerModule.setup('api/docs', app, document);
   // end swagger
 
-  await app.listen(process.env.PORT ?? 4000, '0.0.0.0');
+  await app.listen(process.env.PORT ?? 6000, '0.0.0.0');
 }
 bootstrap();
