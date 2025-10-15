@@ -89,6 +89,7 @@ export class UserRepository {
           email: email,
           password: password,
           type: 'su_admin',
+          phone_number: '', // phone_number is required
         },
       });
       return user;
@@ -119,6 +120,7 @@ export class UserRepository {
           name: name,
           username: username,
           email: email,
+          phone_number: '', // phone_number is required
         },
       });
       if (user) {
@@ -209,7 +211,9 @@ export class UserRepository {
     type?: string;
   }) {
     try {
-      const data = {};
+      const data: any = {
+        phone_number: phone_number || '', // phone_number is required in the schema
+      };
       if (name) {
         data['name'] = name;
       }
@@ -218,9 +222,6 @@ export class UserRepository {
       }
       if (last_name) {
         data['last_name'] = last_name;
-      }
-      if (phone_number) {
-        data['phone_number'] = phone_number;
       }
       if (email) {
         // Check if email already exist
@@ -253,11 +254,13 @@ export class UserRepository {
         // }
       }
 
+      console.log('Creating user with data:', data);
+      
       const user = await prisma.user.create({
-        data: {
-          ...data,
-        },
+        data: data,
       });
+
+      console.log('User created successfully:', user);
 
       if (user) {
         if (role_id) {
@@ -280,6 +283,7 @@ export class UserRepository {
         };
       }
     } catch (error) {
+      console.error('Error creating user:', error);
       return {
         success: false,
         message: error.message,

@@ -1,11 +1,9 @@
 import { IsNotEmpty } from "class-validator";
 
 export class CreatePostDto {
+  @IsNotEmpty()
+  title: string;
 
-@IsNotEmpty()
-title:String
-
-@IsNotEmpty()
-body:String
-
+  @IsNotEmpty()
+  body: string;
 }

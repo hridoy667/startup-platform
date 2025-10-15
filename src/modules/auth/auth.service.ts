@@ -363,10 +363,12 @@ export class AuthService {
         type: type,
       });
 
-      if (user == null && user.success == false) {
+      console.log('User creation result:', user);
+
+      if (!user || user.success == false) {
         return {
           success: false,
-          message: 'Failed to create account',
+          message: user?.message || 'Failed to create account',
         };
       }
 

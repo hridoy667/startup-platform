@@ -7,28 +7,129 @@ import { UpdatePostDto } from './dto/update-post.dto';
 export class PostService {
 
   constructor(private readonly prisma:PrismaService){}
-  async create(createPostDto: CreatePostDto) {
-  const post=await this.prisma.post.create({
-      data:{
-        title:createPostDto.title,
-        body:createPostDto.body
+
+  async create(createPostDto: CreatePostDto, authorId: string) {
+    try {
+      const post = await this.prisma.post.create({
+        data: {
+          title: createPostDto.title,
+          body: createPostDto.body,
+          authorId: authorId
+        }
+      });
+      return {
+        success: true,
+        message: "Post created successfully",
+        data: post
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message: error.message
+      };
+    }
+  }
+
+  async findAll() {
+    try {
+      const posts = await this.prisma.post.findMany({
+        include: {
+          author: {
+            select: {
+              id: true,
+              name: true,
+              email: true
+            }
+          },
+          likes: true
+        },
+        orderBy: {
+          createdAt: 'desc'
+        }
+      });
+      return {
+        success: true,
+        data: posts
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message: error.message
+      };
+    }
+  }
+
+  async findOne(id: string) {
+    try {
+      const post = await this.prisma.post.findUnique({
+        where: { id },
+        include: {
+          author: {
+            select: {
+              id: true,
+              name: true,
+              email: true
+            }
+          },
+          likes: true
+        }
+      });
+      
+      if (!post) {
+        return {
+          success: false,
+          message: 'Post not found'
+        };
       }
-    })
+      
+      return {
+        success: true,
+        data: post
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message: error.message
+      };
+    }
   }
 
-  findAll() {
-    return `This action returns all post`;
+  async update(id: string, updatePostDto: UpdatePostDto) {
+    try {
+      const post = await this.prisma.post.update({
+        where: { id },
+        data: {
+          title: updatePostDto.title,
+          body: updatePostDto.body
+        }
+      });
+      return {
+        success: true,
+        data: post,
+        message: 'Post updated successfully'
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message: error.message
+      };
+    }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} post`;
-  }
-
-  update(id: number, updatePostDto: UpdatePostDto) {
-    return `This action updates a #${id} post`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} post`;
+  async remove(id: string) {
+    try {
+      await this.prisma.post.delete({
+        where: { id }
+      });
+      return {
+        success: true,
+        message: 'Post deleted successfully'
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message: error.message
+      };
+    }
   }
 }
