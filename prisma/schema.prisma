@@ -83,13 +83,20 @@ model User {
   role_users           RoleUser[]
   payment_transactions PaymentTransaction[]
   Posts Post[]
-  Comments comment[]
-  Likes likes[]
+  Comments Comment[]
+  reactions Reaction[]
   @@map("users")
   
 }
-model likes {
+
+enum ReactionType{
+    UPVOAT
+    DOWNVOAT
+}
+
+model Reaction {
 id String @id @default(cuid())
+type      ReactionType
 postId String
 userId String
 post Post @relation(fields: [postId],references: [id],onDelete: Cascade)
@@ -101,10 +108,12 @@ createdAt DateTime @default(now())
 
 }
 
-model comment {
-id Int @id @default(autoincrement())
+model Comment {
+id String @id @default(cuid())
 commentBody String
 commentAuthorId String
+postId String
+post Post @relation(fields: [postId], references: [id])
 commentAuthor User @relation(fields: [commentAuthorId], references: [id], onDelete: Cascade)
 }
 
@@ -118,7 +127,8 @@ model Post{
   updatedAt DateTime @updatedAt
   authorId String
   author User @relation(fields: [authorId], references: [id],onDelete: Cascade)
-  likes likes[]
+  reaction Reaction[]
+  comment Comment[]
 }
 
 model Ucode {

@@ -41,7 +41,7 @@ export class PostService {
               email: true
             }
           },
-          likes: true
+          reaction: true
         },
         orderBy: {
           createdAt: 'desc'
@@ -71,7 +71,7 @@ export class PostService {
               email: true
             }
           },
-          likes: true
+          reaction: true
         }
       });
       
